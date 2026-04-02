@@ -1,3 +1,4 @@
+// Backend API - 22CT4_2251220188 - Nguyễn Lê Như Ngọc
 require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
