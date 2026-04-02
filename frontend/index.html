@@ -1,63 +1,259 @@
-<!-- Frontend - 22CT4_2251220188 - Nguyễn Lê Như Ngọc -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>22CT4_2251220188</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo App - 22CT4</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
-    input { padding: 8px; margin-right: 8px; width: 300px; }
-    button { padding: 8px 16px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
-    li { margin: 8px 0; }
-    .info { background: #f0f0f0; padding: 16px; border-radius: 8px; margin-top: 20px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container { max-width: 700px; margin: 0 auto; }
+
+    .header { text-align: center; margin-bottom: 30px; color: white; }
+    .header h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .header p { font-size: 1rem; opacity: 0.85; }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 1.2rem;
+      color: #4a5568;
+      margin-bottom: 18px;
+      font-weight: 600;
+      border-left: 4px solid #667eea;
+      padding-left: 12px;
+    }
+
+    .input-row { display: flex; gap: 10px; margin-bottom: 20px; }
+
+    .input-row input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .input-row input:focus { border-color: #667eea; }
+
+    .input-row button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .input-row button:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .stats { display: flex; gap: 8px; margin-bottom: 16px; }
+    .badge {
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .badge-total { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+    .badge-done { background: #c6f6d5; color: #276749; }
+    .badge-pending { background: #fed7d7; color: #9b2c2c; }
+
+    .todo-list { list-style: none; }
+
+    .todo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      background: #f7f8fc;
+      border: 1px solid #e2e8f0;
+      transition: transform 0.1s;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .todo-item:hover { transform: translateX(4px); }
+    .todo-item.done { background: #f0fff4; border-color: #c6f6d5; }
+
+    .todo-checkbox {
+      width: 22px; height: 22px;
+      border: 2px solid #667eea;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      background: white;
+    }
+    .todo-checkbox.checked {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-color: #667eea;
+    }
+    .todo-checkbox.checked::after { content: '✓'; color: white; font-size: 13px; font-weight: bold; }
+
+    .todo-text { flex: 1; font-size: 1rem; color: #2d3748; transition: all 0.2s; }
+    .todo-text.done { text-decoration: line-through; color: #a0aec0; }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: #fc8181;
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .delete-btn:hover { background: #fff5f5; }
+
+    .empty { text-align: center; color: #a0aec0; padding: 30px 0; font-size: 0.95rem; }
+
+    .student-info { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .info-item { background: #f7f8fc; border-radius: 10px; padding: 14px 16px; border: 1px solid #e2e8f0; }
+    .info-label { font-size: 0.75rem; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+    .info-value { font-size: 1rem; color: #2d3748; font-weight: 600; }
   </style>
 </head>
 <body>
+  <!-- Frontend - 22CT4_2251220188 - Nguyễn Lê Như Ngọc -->
 
-  <h1>Danh sách Items</h1>
-  <input id="itemName" placeholder="Nhập tên item..." />
-  <button onclick="addItem()">Thêm</button>
-  <ul id="itemList"></ul>
+  <div class="container">
+    <div class="header">
+      <h1>📝 Todo App</h1>
+      <p>Quản lý công việc cá nhân đơn giản & hiệu quả</p>
+    </div>
 
-  <div class="info">
-    <h2>Thông tin sinh viên</h2>
-    <div id="about"></div>
+    <div class="card">
+      <h2>➕ Thêm công việc mới</h2>
+      <div class="input-row">
+        <input id="itemName" placeholder="Nhập tên công việc..." onkeydown="if(event.key==='Enter') addItem()" />
+        <button onclick="addItem()">Thêm</button>
+      </div>
+
+      <div class="stats">
+        <span class="badge badge-total" id="badgeTotal">0 công việc</span>
+        <span class="badge badge-done" id="badgeDone">0 hoàn thành</span>
+        <span class="badge badge-pending" id="badgePending">0 chưa làm</span>
+      </div>
+
+      <ul class="todo-list" id="itemList">
+        <li class="empty">Chưa có công việc nào. Hãy thêm mới!</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h2>👤 Thông tin sinh viên</h2>
+      <div class="student-info" id="about"></div>
+    </div>
   </div>
 
   <script>
     const API = 'http://localhost:3000';
 
     async function loadItems() {
-      const res = await fetch(`${API}/items`);
-      const items = await res.json();
-      document.getElementById('itemList').innerHTML =
-        items.map(i => `<li>${i.name}</li>`).join('');
+      try {
+        const res = await fetch(`${API}/items`);
+        const items = await res.json();
+        const list = document.getElementById('itemList');
+
+        const done = items.filter(i => i.done).length;
+        const pending = items.length - done;
+        document.getElementById('badgeTotal').textContent = `${items.length} công việc`;
+        document.getElementById('badgeDone').textContent = `${done} hoàn thành`;
+        document.getElementById('badgePending').textContent = `${pending} chưa làm`;
+
+        if (items.length === 0) {
+          list.innerHTML = '<li class="empty">Chưa có công việc nào. Hãy thêm mới!</li>';
+          return;
+        }
+
+        list.innerHTML = items.map(item => `
+          <li class="todo-item ${item.done ? 'done' : ''}" id="item-${item.id}">
+            <div class="todo-checkbox ${item.done ? 'checked' : ''}" onclick="toggleDone(${item.id}, ${!item.done})"></div>
+            <span class="todo-text ${item.done ? 'done' : ''}">${item.name}</span>
+            <button class="delete-btn" onclick="deleteItem(${item.id})" title="Xóa">🗑</button>
+          </li>
+        `).join('');
+      } catch(e) { console.error(e); }
     }
 
     async function addItem() {
-      const name = document.getElementById('itemName').value;
+      const input = document.getElementById('itemName');
+      const name = input.value.trim();
       if (!name) return;
       await fetch(`${API}/items`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name })
       });
-      document.getElementById('itemName').value = '';
+      input.value = '';
+      loadItems();
+    }
+
+    async function toggleDone(id, done) {
+      await fetch(`${API}/items/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ done })
+      });
+      loadItems();
+    }
+
+    async function deleteItem(id) {
+      await fetch(`${API}/items/${id}`, { method: 'DELETE' });
       loadItems();
     }
 
     async function loadAbout() {
-      const res = await fetch(`${API}/about`);
-      const data = await res.json();
-      document.getElementById('about').innerHTML =
-        `<p><b>Họ tên:</b> ${data.name}</p>
-         <p><b>MSSV:</b> ${data.studentId}</p>
-         <p><b>Lớp:</b> ${data.class}</p>`;
+      try {
+        const res = await fetch(`${API}/about`);
+        const data = await res.json();
+        document.getElementById('about').innerHTML = `
+          <div class="info-item">
+            <div class="info-label">Họ và tên</div>
+            <div class="info-value">${data.name}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">MSSV</div>
+            <div class="info-value">${data.studentId}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Lớp</div>
+            <div class="info-value">${data.class}</div>
+          </div>
+          <div class="info-item">
+            <div class="info-label">Môn học</div>
+            <div class="info-value">DevOps cơ bản</div>
+          </div>
+        `;
+      } catch(e) { console.error(e); }
     }
 
     loadItems();
     loadAbout();
   </script>
-
 </body>
 </html>
