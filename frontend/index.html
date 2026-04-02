@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>22CT4_2251220188</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 0 20px; }
+    input { padding: 8px; margin-right: 8px; width: 300px; }
+    button { padding: 8px 16px; background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+    li { margin: 8px 0; }
+    .info { background: #f0f0f0; padding: 16px; border-radius: 8px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>Danh sách Items</h1>
+  <input id="itemName" placeholder="Nhập tên item..." />
+  <button onclick="addItem()">Thêm</button>
+  <ul id="itemList"></ul>
+
+  <div class="info">
+    <h2>Thông tin sinh viên</h2>
+    <div id="about"></div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:3000';
+
+    async function loadItems() {
+      const res = await fetch(`${API}/items`);
+      const items = await res.json();
+      document.getElementById('itemList').innerHTML =
+        items.map(i => `<li>${i.name}</li>`).join('');
+    }
+
+    async function addItem() {
+      const name = document.getElementById('itemName').value;
+      if (!name) return;
+      await fetch(`${API}/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      document.getElementById('itemName').value = '';
+      loadItems();
+    }
+
+    async function loadAbout() {
+      const res = await fetch(`${API}/about`);
+      const data = await res.json();
+      document.getElementById('about').innerHTML =
+        `<p><b>Họ tên:</b> ${data.name}</p>
+         <p><b>MSSV:</b> ${data.studentId}</p>
+         <p><b>Lớp:</b> ${data.class}</p>`;
+    }
+
+    loadItems();
+    loadAbout();
+  </script>
+
+</body>
+</html>
